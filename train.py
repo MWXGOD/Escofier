@@ -100,6 +100,7 @@ def main():
     model_name = args.model_name_or_path
     lora_rank = args.lora_rank
     lora_alpha = args.lora_alpha
+    output_dir = training_args.output_dir
 
     for epoch in  range(training_args.num_train_epochs): 
         # 准备训练
@@ -119,10 +120,10 @@ def main():
         max_f1 = -1
         if F1 > max_f1:
             max_f1 = F1
-            model.save_pretrained(args.output_dir) 
-            with open(f"{args.output_dir}/dev_gold_{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
+            model.save_pretrained(output_dir) 
+            with open(f"{output_dir}/dev_gold_{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
                 json.dump({"gold_label": gold_label_list}, f, indent=4)
-            with open(f"{args.output_dir}/dev_pred_{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
+            with open(f"{output_dir}/dev_pred_{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
                 json.dump({"pred_label": pred_label_list}, f, indent=4)
             logger.info("模型已保存")
         end = time.time()
@@ -133,14 +134,14 @@ def main():
 
     # 准备测试
     logger.info("测试开始")
-    model = AutoModelForCausalLM.from_pretrained(args.output_dir)
+    model = AutoModelForCausalLM.from_pretrained(output_dir)
     start = time.time()
     gold_label_list, pred_label_list = trainer.test(epoch, test_dataloader, train_dataset.stop_word, tokenizer)
     
     # 保存推理结果
-    with open(f"{args.output_dir}/test_pred{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
+    with open(f"{output_dir}/test_pred{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
         json.dump({"gold_label": gold_label_list}, f, indent=4)
-    with open(f"{args.output_dir}/test_gold{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
+    with open(f"{output_dir}/test_gold{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
         json.dump({"pred_label": pred_label_list}, f, indent=4)
     end = time.time()
     P, R, F1 = get_prf(gold_label_list, pred_label_list)
