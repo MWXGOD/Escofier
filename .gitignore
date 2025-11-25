@@ -1,0 +1,35 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+
+# ---- Virtual Env ----
+venv/
+.env/
+
+# ---- VSCode ----
+.vscode/
+
+# ---- System ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+
+# ---- Models / Large files (可选) ----
+*.bin
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.safetensors
+
+# ---- Cache ----
+.cache/
+
