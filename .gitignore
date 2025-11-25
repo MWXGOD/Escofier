@@ -35,3 +35,5 @@ Thumbs.db
 .cache/
 .output/
 .swanlog/
+.virtual_documents/
+.ipynb_checkpoints/

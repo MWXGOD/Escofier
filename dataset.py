@@ -5,7 +5,6 @@ from transformers import (
     AutoTokenizer,
     AutoConfig,
 )
-from config import Config
 
 class UnifiedSFTDataset(Dataset):
     def __init__(self, config, data_path, **kwargs):
@@ -79,10 +78,11 @@ if __name__ == "__main__":
     # with open("/home/muwenxuan/Escofier/data/sample_data/dummy_data.jsonl", 'w', encoding='utf-8') as f:
     #     json.dump(data, f, indent=4, ensure_ascii=False)
     
-    config_path = "/home/muwenxuan/Escofier/config/qwen2.5-0.5b-sft-qlora.json"
-    config = Config(config_path)
-    train_dataset = UnifiedSFTDataset(config)
-    print((train_dataset[0]))
+    # config_path = "/home/muwenxuan/Escofier/config/qwen2.5-0.5b-sft-qlora.json"
+    # config = Config(config_path)
+    # train_dataset = UnifiedSFTDataset(config)
+    # print((train_dataset[0]))
+    pass
 
 
 
