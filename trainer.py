@@ -91,7 +91,7 @@ class Escofier_Trainer:
         avg_dev_epoch_loss = epoch_loss_dev / len(dev_dataloader)
         return avg_dev_epoch_loss, gold_label_list, pred_label_list
             
-    def test(self, epoch, test_dataloader, stop_word, tokenizer):
+    def test(self, test_dataloader, stop_word, tokenizer):
         self.model.eval()
         top_p = 0.9  
         temperature = 0.7  
@@ -103,7 +103,7 @@ class Escofier_Trainer:
             for index, batch in tqdm(
                 enumerate(test_dataloader), 
                 total=len(test_dataloader),
-                desc=f"Epoch {epoch+1}/{self.training_args.num_train_epochs}",
+                desc=f"Testing...",
                 unit="batch"
             ):
                 batch = {
