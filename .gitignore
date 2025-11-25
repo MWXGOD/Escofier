@@ -5,6 +5,7 @@ __pycache__/
 *.pyd
 *.egg-info/
 *.egg
+*.ipynb
 dist/
 build/
 
@@ -32,4 +33,4 @@ Thumbs.db
 
 # ---- Cache ----
 .cache/
-
+.output/
