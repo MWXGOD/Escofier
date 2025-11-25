@@ -97,7 +97,7 @@ def main():
     trainer = Escofier_Trainer(model, **trainer_args)
     
     # 保存文件重命名参数
-    model_name = args.model_name_or_path
+    model_name = args.model_name_or_path.split('/')[-1]
     lora_rank = args.lora_rank
     lora_alpha = args.lora_alpha
     output_dir = training_args.output_dir

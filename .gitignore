@@ -32,8 +32,8 @@ Thumbs.db
 *.safetensors
 
 # ---- Cache ----
-.cache/
-.output/
-.swanlog/
+cache/
+output/
+swanlog/
 .virtual_documents/
 .ipynb_checkpoints/
