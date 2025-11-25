@@ -30,9 +30,11 @@ class UnifiedSFTDataset(Dataset):
 
         # instruction = data['instruction']
         input = data['instruction'] + data['input']
-        output = data['output']
-        input_tokens = self.tokenizer.bos_token + self.tokenizer.encode(input, add_special_tokens=False)
-        output_tokens = self.tokenizer.encode(output, add_special_tokens=False) + self.tokenizer.eos_token
+        output = data['output'] + self.tokenizer.eos_token
+        # qwen里面没有bos_token
+        input_tokens = self.tokenizer.encode(input, add_special_tokens=False)
+        output_tokens = self.tokenizer.encode(output, add_special_tokens=False)
+        input_ids = input_tokens + output_tokens
         target_mask += [0] * len(input_tokens) + [1] * len(output_tokens)
         assert len(input_ids) == len(target_mask)
         

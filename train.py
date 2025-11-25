@@ -98,8 +98,8 @@ def main():
     
     # 保存文件重命名参数
     model_name = args.model_name_or_path
-    lora_rank = training_args.lora_rank
-    lora_alpha = training_args.lora_alpha
+    lora_rank = args.lora_rank
+    lora_alpha = args.lora_alpha
 
     for epoch in  range(training_args.num_train_epochs): 
         # 准备训练
@@ -113,7 +113,7 @@ def main():
         # 准备验证
         logger.info("验证开始")
         start = time.time()
-        avg_dev_epoch_loss, gold_label_list, pred_label_list = trainer.dev(epoch, dev_dataloader, train_dataset.stop_word, tokenizer)
+        avg_dev_epoch_loss, gold_label_list, pred_label_list = trainer.dev(epoch, dev_dataloader, tokenizer.eos_token, tokenizer)
         end = time.time()
         P, R, F1 = get_prf(gold_label_list, pred_label_list)
         max_f1 = -1
