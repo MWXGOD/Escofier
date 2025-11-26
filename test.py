@@ -39,7 +39,7 @@ def main():
     # Test
     test_dataset = UnifiedSFTDataset(args.test_path, is_train=False, **dataset_args)
     test_dataloader = get_dataloader(training_args, test_dataset, False)
-    
+
     trainer_args = {
         "device": device,
         "scaler": None,
@@ -62,7 +62,6 @@ def main():
     end = time.time()
     P, R, F1 = get_prf(gold_label_list, pred_label_list)
     logger.info(f"最终测试集的P: {P:.2f}, P: {R:.2f}, F: {F1:.2f}")
-    # swanlab.log({"test_P": P, "test_R": R, "test_F1": F1})
 
 
     logger.info(f"本次测试一共花费了{(end - first_start)/60:.2f}分钟")

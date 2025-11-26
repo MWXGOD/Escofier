@@ -51,9 +51,6 @@ def main():
     # Dev
     dev_dataset = UnifiedSFTDataset(args.dev_path, is_train=False, **dataset_args)
     dev_dataloader = get_dataloader(training_args, dev_dataset, False)
-    # Test
-    test_dataset = UnifiedSFTDataset(args.test_path, is_train=False, **dataset_args)
-    test_dataloader = get_dataloader(training_args, test_dataset, False)
 
 
     # Optimizer和scaler
@@ -122,30 +119,6 @@ def main():
         end = time.time()
         logger.info(f"评价指标P: {P:.2f}, P: {R:.2f}, F: {F1:.2f}")
         swanlab.log({"dev_P": P, "dev_R": R, "dev_F1": F1})
-
-    # 测试目前已弃用，请转移test.py
-
-    # # 准备测试
-    # logger.info("测试开始")
-    # # 清除旧模型，释放显存
-    # del trainer.model
-    # torch.cuda.empty_cache()
-    # # 加载最优模型
-    # test_model = AutoModelForCausalLM.from_pretrained(output_dir).to(device)
-    # # 覆盖 trainer.model
-    # trainer.model = test_model
-    # start = time.time()
-    # gold_label_list, pred_label_list = trainer.test(test_dataloader, tokenizer.eos_token, tokenizer)
-    
-    # # 保存推理结果
-    # with open(f"{output_dir}/test_pred{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
-    #     json.dump({"gold_label": gold_label_list}, f, indent=4)
-    # with open(f"{output_dir}/test_gold{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
-    #     json.dump({"pred_label": pred_label_list}, f, indent=4)
-    # end = time.time()
-    # P, R, F1 = get_prf(gold_label_list, pred_label_list)
-    # logger.info(f"最终测试集的P: {P:.2f}, P: {R:.2f}, F: {F1:.2f}")
-
 
     logger.info(f"本次训练一共花费了{(end - first_start)/60:.2f}分钟")
 

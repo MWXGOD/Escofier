@@ -29,9 +29,6 @@ class Escofier_Trainer:
                 for k, v in batch.items()
             }
             with autocast(device_type='cuda', dtype=torch.float16):
-                # input_ids = batch["input_ids"]
-                # attention_mask = batch["attention_mask"]
-                # labels = batch["labels"]
                 outputs = self.model(**batch)
                 train_loss = outputs.loss
                 train_loss_accumulate = train_loss / self.training_args.gradient_accumulation_steps
@@ -44,11 +41,6 @@ class Escofier_Trainer:
                 self.lr_scheduler.step()
             loss_per_epoch += train_loss.item()
             swanlab.log({"train_loss_per_step": train_loss.item()})
-            # if self.device.type == "cuda":
-            #     mem_mb = torch.cuda.max_memory_allocated(self.device) / 1024 / 1024
-            # else:
-            #     mem_mb = 0.0
-            # swanlab.log({"Train Memory(MB): ": mem_mb})
             
             
 
@@ -81,11 +73,6 @@ class Escofier_Trainer:
                     dev_loss = outputs.loss
                 epoch_loss_dev += dev_loss.item()
                 swanlab.log({"dev_loss_per_step": dev_loss.item()})
-                # if self.device.type == "cuda":
-                #     mem_mb = torch.cuda.max_memory_allocated(self.device) / 1024 / 1024
-                # else:
-                #     mem_mb = 0.0
-                # swanlab.log({"Dev Memory(MB): ": mem_mb})
 
                 generate_input_ids = batch['generate_input_ids']
                 generate_attention_mask = batch['generate_attention_mask']
