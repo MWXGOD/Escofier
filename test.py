@@ -33,14 +33,13 @@ def main():
 
     tokenizer = getTokenizer(args.model_name_or_path)
 
-    # 准备数据
-    # Test
-    test_dataset_args = {'tokenizer': tokenizer}
-    test_dataset = UnifiedSFTDataset(args, args.test_path, **test_dataset_args)
-    test_collator_args = {'tokenizer': tokenizer}
-    test_collator = SFTDataCollatorDev(args, **test_collator_args)
-    test_dataloader = get_dataloader(training_args, test_dataset, test_collator, False)
 
+    # 准备数据
+    dataset_args = {'args': args, 'tokenizer': tokenizer}
+    # Test
+    test_dataset = UnifiedSFTDataset(args.test_path, is_train=False, **dataset_args)
+    test_dataloader = get_dataloader(training_args, test_dataset, False)
+    
     trainer_args = {
         "device": device,
         "scaler": None,
