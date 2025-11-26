@@ -42,9 +42,6 @@ class Escofier_Trainer:
             loss_per_epoch += train_loss.item()
             swanlab.log({"train_loss_per_step": train_loss.item()})
             
-            
-
-
         avg_loss_per_epoch = loss_per_epoch / len(train_dataloader)
         return avg_loss_per_epoch
             

@@ -38,13 +38,10 @@ def find_all_adapter_names(model, train_mode):
 
 
 def getTokenizer(model_name_or_path):
-    config = AutoConfig.from_pretrained(model_name_or_path, trust_remote_code=True)
     # 加载tokenzier
     tokenizer = AutoTokenizer.from_pretrained(
         model_name_or_path,
         trust_remote_code=True,
-        # llama不支持fast
-        use_fast=False if config.model_type == 'llama' or config.model_type == 'internlm2' else True
     )
     return tokenizer
 
