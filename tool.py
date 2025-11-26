@@ -158,7 +158,7 @@ def init_lora_components(args, training_args):
     return model, ref_model, peft_config
 
 
-def get_dataloader(args, dataset, data_collator, is_training):
+def get_dataloader(args, dataset, is_training):
     
     if not isinstance(dataset, IterableDataset):
         sampler = RandomSampler(dataset) if is_training else SequentialSampler(dataset)
