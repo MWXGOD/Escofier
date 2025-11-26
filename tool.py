@@ -49,11 +49,11 @@ def getTokenizer(model_name_or_path):
     return tokenizer
 
 
-def getArgument(train_args_file = None):
+def getArgument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train_args_file", type=str, default="./config/qwen2.5-7b-sft-qlora.json")
+    parser.add_argument("--train_args_file", type=str, default="./escifier_config/qwen2.5-7b-sft-qlora.json")
     args = parser.parse_args()
-    train_args_file = train_args_file or args.train_args_file
+    train_args_file = args.train_args_file
     parser = HfArgumentParser((CustomizedArguments, TrainingArguments))
     args, training_args = parser.parse_json_file(json_file=train_args_file)
 

@@ -102,6 +102,7 @@ def main():
     lora_alpha = args.lora_alpha
     output_dir = training_args.output_dir
 
+    max_f1 = -1
     for epoch in  range(training_args.num_train_epochs): 
         # 准备训练
         logger.info("训练开始")
@@ -117,7 +118,6 @@ def main():
         avg_dev_epoch_loss, gold_label_list, pred_label_list = trainer.dev(epoch, dev_dataloader, tokenizer.eos_token, tokenizer)
         end = time.time()
         P, R, F1 = get_prf(gold_label_list, pred_label_list)
-        max_f1 = -1
         if F1 > max_f1:
             max_f1 = F1
             model.save_pretrained(output_dir) 
@@ -134,9 +134,15 @@ def main():
 
     # 准备测试
     logger.info("测试开始")
-    model = AutoModelForCausalLM.from_pretrained(output_dir)
+    # 清除旧模型，释放显存
+    del trainer.model
+    torch.cuda.empty_cache()
+    # 加载最优模型
+    test_model = AutoModelForCausalLM.from_pretrained(output_dir).to(device)
+    # 覆盖 trainer.model
+    trainer.model = test_model
     start = time.time()
-    gold_label_list, pred_label_list = trainer.test(epoch, test_dataloader, tokenizer.eos_token, tokenizer)
+    gold_label_list, pred_label_list = trainer.test(test_dataloader, tokenizer.eos_token, tokenizer)
     
     # 保存推理结果
     with open(f"{output_dir}/test_pred{model_name}_rank{lora_rank}_alpha{lora_alpha}.json", 'w', encoding='utf-8') as f:
@@ -146,7 +152,6 @@ def main():
     end = time.time()
     P, R, F1 = get_prf(gold_label_list, pred_label_list)
     logger.info(f"最终测试集的P: {P:.2f}, P: {R:.2f}, F: {F1:.2f}")
-    swanlab.log({"test_P": P, "test_R": R, "test_F1": F1})
 
 
     logger.info(f"本次训练一共花费了{(end - first_start)/60:.2f}分钟")
