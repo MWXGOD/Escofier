@@ -108,6 +108,8 @@ def main():
         start = time.time()
         avg_dev_epoch_loss, gold_label_list, pred_label_list = trainer.dev(epoch, dev_dataloader, tokenizer.eos_token, tokenizer)
         end = time.time()
+        logger.info(f"当前轮次: {epoch + 1}, 花费了{(end - start)/60:.2f}分钟, 平均训练损失: {avg_dev_epoch_loss:.4f}")
+        swanlab.log({"dev_loss_per_epoch": avg_dev_epoch_loss})
         P, R, F1 = get_prf(gold_label_list, pred_label_list)
         if F1 > max_f1:
             max_f1 = F1
@@ -118,13 +120,11 @@ def main():
                 json.dump({"pred_label": pred_label_list}, f, indent=4)
             logger.info("模型已保存")
         end = time.time()
-        logger.info(f"当前轮次: {epoch + 1}, 花费了{(end - start)/60:.2f}分钟")
-        logger.info(f"平均训练损失: {avg_dev_epoch_loss:.4f}")
         logger.info(f"评价指标P: {P:.2f}, P: {R:.2f}, F: {F1:.2f}")
         swanlab.log({"dev_P": P, "dev_R": R, "dev_F1": F1})
 
     # 测试目前已弃用，请转移test.py
-    
+
     # # 准备测试
     # logger.info("测试开始")
     # # 清除旧模型，释放显存
