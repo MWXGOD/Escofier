@@ -2,7 +2,6 @@ from loguru import logger
 import os
 import torch
 import bitsandbytes as bnb
-from collator import SFTDataCollatorTrain
 from dataset import UnifiedSFTDataset
 from transformers import (
     AutoModelForCausalLM,
