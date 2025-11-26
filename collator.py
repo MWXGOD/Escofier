@@ -6,6 +6,7 @@ from transformers import (
     AutoConfig,
 )
 
+# 已弃用！！！！！！！！！！！！！！！！！见dataset-conllate_fn
 
 class SFTDataCollatorTrain(object):
     def __init__(self, config, **kwargs):
@@ -74,20 +75,12 @@ class SFTDataCollatorTrain(object):
         return tokenizer
 
 class SFTDataCollatorDev(SFTDataCollatorTrain):
-    """
-    验证/测试用的 collator：
-    - 复用父类逻辑，得到 input_ids / attention_mask / labels
-    - 额外返回 generate_input_ids / generate_attention_mask / output_tokens
-    """
     def __call__(self, batch: List[Dict[str, Any]]) -> Dict[str, Any]:
-        # 先用父类，把训练相关的部分做好（input_ids, attention_mask, labels）
-        # inputs = super().__call__(batch)
-        # 找出batch中的最大长度
+
         lengths = [len(x['input_ids']) for x in batch if x['input_ids'] is not None]
         batch_max_len = min(max(lengths), self.max_seq_length)
 
         input_ids_batch, attention_mask_batch, target_mask_batch = [], [], []
-        # 额外：为了构造 generate_*，我们还需要“未 pad 前”的 prompt / answer 切分
         generate_input_ids_list = []
         generate_attention_mask_list = []
         output_tokens_list = []        
@@ -150,9 +143,6 @@ class SFTDataCollatorDev(SFTDataCollatorTrain):
             g_ids = [self.pad_token_id] * pad_len + g_ids
             g_mask = [0] * pad_len + g_mask
 
-            # g_ids = g_ids[:self.max_seq_length]
-            # g_mask = g_mask[:self.max_seq_length]
-
             gen_input_ids_batch.append(g_ids)
             gen_attention_mask_batch.append(g_mask)
         
@@ -163,7 +153,7 @@ class SFTDataCollatorDev(SFTDataCollatorTrain):
             "input_ids": input_ids_batch,
             "attention_mask": attention_mask_batch,
             "labels": labels,
-            "target_mask": target_mask_batch,              # 你验证时还要用 loss_fn
+            "target_mask": target_mask_batch,
             "generate_input_ids": gen_input_ids_batch,     # 给 model.generate 用
             "generate_attention_mask": gen_attention_mask_batch,
             "output_tokens": output_tokens_list,           # answer 的 token id 序列

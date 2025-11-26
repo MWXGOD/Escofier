@@ -12,7 +12,6 @@ from transformers import (
 import time
 from tool import *
 from dataset import UnifiedSFTDataset
-from collator import SFTDataCollatorTrain, SFTDataCollatorDev
 from torch.amp import GradScaler
 import math
 import swanlab
@@ -46,23 +45,15 @@ def main():
 
     # 准备数据
     # Train
-    train_dataset_args = {'tokenizer': tokenizer}
-    train_dataset = UnifiedSFTDataset(args, args.train_path, **train_dataset_args)
-    train_collator_args = {'tokenizer': tokenizer}
-    train_collator = SFTDataCollatorTrain(args, **train_collator_args)
-    train_dataloader = get_dataloader(training_args, train_dataset, train_collator, True)
+    dataset_args = {'args': args, 'tokenizer': tokenizer}
+    train_dataset = UnifiedSFTDataset(args.train_path, is_train=True, **dataset_args)
+    train_dataloader = get_dataloader(training_args, train_dataset, True)
     # Dev
-    dev_dataset_args = {'tokenizer': tokenizer}
-    dev_dataset = UnifiedSFTDataset(args, args.dev_path, **dev_dataset_args)
-    dev_collator_args = {'tokenizer': tokenizer}
-    dev_collator = SFTDataCollatorDev(args, **dev_collator_args)
-    dev_dataloader = get_dataloader(training_args, dev_dataset, dev_collator, False)
+    dev_dataset = UnifiedSFTDataset(args.dev_path, is_train=False, **dataset_args)
+    dev_dataloader = get_dataloader(training_args, dev_dataset, False)
     # Test
-    test_dataset_args = {'tokenizer': tokenizer}
-    test_dataset = UnifiedSFTDataset(args, args.test_path, **test_dataset_args)
-    test_collator_args = {'tokenizer': tokenizer}
-    test_collator = SFTDataCollatorDev(args, **test_collator_args)
-    test_dataloader = get_dataloader(training_args, test_dataset, test_collator, False)
+    test_dataset = UnifiedSFTDataset(args.test_path, is_train=False, **dataset_args)
+    test_dataloader = get_dataloader(training_args, test_dataset, False)
 
 
     # Optimizer和scaler

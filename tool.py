@@ -51,7 +51,7 @@ def getTokenizer(model_name_or_path):
 
 def getArgument():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train_args_file", type=str, default="./escifier_config/qwen2.5-7b-sft-qlora.json")
+    parser.add_argument("--train_args_file", type=str, default="./escifier_argument/qwen2.5-7b-sft-qlora.json")
     args = parser.parse_args()
     train_args_file = args.train_args_file
     parser = HfArgumentParser((CustomizedArguments, TrainingArguments))
@@ -148,26 +148,9 @@ def getModel(args, training_args):
 
 def init_lora_components(args, training_args):
     # 初始化组件
-    training_args.ddp_find_unused_parameters = False
+    training_args.ddp_fid_nunused_parameters = False
     logger.info('Initializing components...')
 
-    # 加载tokenizer
-    # tokenizer = getTokenizer(args.model_name_or_path)
-
-    # 加载dataset和collator
-    # if args.task_type == 'sft':
-    #     kwargs = {
-    #         'tokenizer': tokenizer
-    #     }
-    #     logger.info('Train model with sft task')
-    #     logger.info('Loading data with UnifiedSFTDataset')
-    #     train_dataset = UnifiedSFTDataset(args, **kwargs)
-    #     logger.info('Loading collator with SFTDataCollator')
-    #     data_collator = SFTDataCollator(args, **kwargs)
-    # else:
-    #     logger.info('仅支持sft微调')
-
-    # 加载model
     model_dict = getModel(args, training_args)
     model, ref_model, peft_config = model_dict['model'], model_dict['ref_model'], model_dict['peft_config']
 
@@ -187,7 +170,7 @@ def get_dataloader(args, dataset, data_collator, is_training):
             num_workers=args.dataloader_num_workers,
             pin_memory=True,
             worker_init_fn=seed_worker if is_training else None,
-            collate_fn=data_collator
+            collate_fn=dataset.collate_fn
         )
     else:
         dataloader = DataLoader(dataset, batch_size=args.per_device_train_batch_size)
